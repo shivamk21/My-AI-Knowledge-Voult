@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: ai-knowledge-vault-api
+    runtime: docker
+    plan: free
+    dockerfilePath: ./src/AiKnowledgeVault.Api/Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://+:8080
+      - key: ConnectionStrings__DefaultConnection
+        sync: false
+      - key: AllowedCorsOrigins__0
+        sync: false
+      - key: TemporaryAccess__Enabled
+        value: true
+      - key: TemporaryAccess__ApiKey
+        sync: false

@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ai-knowledge-vault-db
+    environment:
+      POSTGRES_DB: ai_knowledge_vault
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ai_knowledge_vault"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: src/AiKnowledgeVault.Api/Dockerfile
+    container_name: ai-knowledge-vault-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Host=db;Port=5432;Database=ai_knowledge_vault;Username=postgres;Password=postgres
+      AllowedCorsOrigins__0: http://localhost:5173
+      TemporaryAccess__Enabled: "true"
+      TemporaryAccess__ApiKey: dev-local-vault-key
+    ports:
+      - "5000:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  ui:
+    build:
+      context: frontend/ai-knowledge-vault-ui
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: http://localhost:5000
+        VITE_API_KEY: dev-local-vault-key
+    container_name: ai-knowledge-vault-ui
+    ports:
+      - "5173:80"
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:

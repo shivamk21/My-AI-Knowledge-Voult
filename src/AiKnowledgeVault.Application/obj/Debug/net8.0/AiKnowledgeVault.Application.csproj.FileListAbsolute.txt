@@ -1,0 +1,15 @@
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Application\bin\Debug\net8.0\AiKnowledgeVault.Application.deps.json
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Application\bin\Debug\net8.0\AiKnowledgeVault.Application.dll
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Application\bin\Debug\net8.0\AiKnowledgeVault.Application.pdb
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Application\bin\Debug\net8.0\AiKnowledgeVault.Domain.dll
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Application\bin\Debug\net8.0\AiKnowledgeVault.Domain.pdb
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Application\obj\Debug\net8.0\AiKnowledgeVault.Application.csproj.AssemblyReference.cache
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Application\obj\Debug\net8.0\AiKnowledgeVault.Application.GeneratedMSBuildEditorConfig.editorconfig
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Application\obj\Debug\net8.0\AiKnowledgeVault.Application.AssemblyInfoInputs.cache
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Application\obj\Debug\net8.0\AiKnowledgeVault.Application.AssemblyInfo.cs
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Application\obj\Debug\net8.0\AiKnowledgeVault.Application.csproj.CoreCompileInputs.cache
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Application\obj\Debug\net8.0\AiKnowle.E881DD97.Up2Date
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Application\obj\Debug\net8.0\AiKnowledgeVault.Application.dll
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Application\obj\Debug\net8.0\refint\AiKnowledgeVault.Application.dll
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Application\obj\Debug\net8.0\AiKnowledgeVault.Application.pdb
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Application\obj\Debug\net8.0\ref\AiKnowledgeVault.Application.dll

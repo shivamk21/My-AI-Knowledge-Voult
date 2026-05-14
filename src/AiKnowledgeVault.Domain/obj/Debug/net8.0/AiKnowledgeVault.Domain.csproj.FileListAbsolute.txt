@@ -1,0 +1,11 @@
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Domain\bin\Debug\net8.0\AiKnowledgeVault.Domain.deps.json
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Domain\bin\Debug\net8.0\AiKnowledgeVault.Domain.dll
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Domain\bin\Debug\net8.0\AiKnowledgeVault.Domain.pdb
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Domain\obj\Debug\net8.0\AiKnowledgeVault.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Domain\obj\Debug\net8.0\AiKnowledgeVault.Domain.AssemblyInfoInputs.cache
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Domain\obj\Debug\net8.0\AiKnowledgeVault.Domain.AssemblyInfo.cs
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Domain\obj\Debug\net8.0\AiKnowledgeVault.Domain.csproj.CoreCompileInputs.cache
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Domain\obj\Debug\net8.0\AiKnowledgeVault.Domain.dll
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Domain\obj\Debug\net8.0\refint\AiKnowledgeVault.Domain.dll
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Domain\obj\Debug\net8.0\AiKnowledgeVault.Domain.pdb
+C:\Shivam_Code\Knowledge_Voult\src\AiKnowledgeVault.Domain\obj\Debug\net8.0\ref\AiKnowledgeVault.Domain.dll
