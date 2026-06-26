@@ -51,3 +51,14 @@ export type SearchFilters = {
 };
 
 export type SearchResult = { notes: Note[]; links: SavedLink[] };
+
+export type ImportedLinkSourceType = 'Bookmark HTML' | 'Text File';
+
+export type ImportedLink = {
+  id: string;
+  url: string;
+  title: string;
+  description: string;
+  sourceType: ImportedLinkSourceType;
+  category?: string;
+};

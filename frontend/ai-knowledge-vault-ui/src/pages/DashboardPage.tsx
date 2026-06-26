@@ -1,5 +1,5 @@
 import { Button, Grid, Paper, Stack, Typography } from '@mui/material';
-import { AddLink, NoteAdd, Search } from '@mui/icons-material';
+import { AddLink, FileUpload, NoteAdd, Search } from '@mui/icons-material';
 import { Link as RouterLink } from 'react-router-dom';
 
 export default function DashboardPage() {
@@ -10,9 +10,10 @@ export default function DashboardPage() {
         {[
           { title: 'Capture a note', action: 'Add note', to: '/notes/new', icon: <NoteAdd /> },
           { title: 'Save a link', action: 'Add link', to: '/links/new', icon: <AddLink /> },
+          { title: 'Import bookmarks', action: 'Upload links', to: '/imports', icon: <FileUpload /> },
           { title: 'Find knowledge', action: 'Search vault', to: '/search', icon: <Search /> }
         ].map((item) => (
-          <Grid item xs={12} md={4} key={item.to}>
+          <Grid item xs={12} sm={6} md={3} key={item.to}>
             <Paper sx={{ p: 3, height: '100%' }}>
               <Stack spacing={2}>
                 {item.icon}

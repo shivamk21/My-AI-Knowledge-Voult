@@ -9,3 +9,7 @@
 .env
 .env.*
 !.env.example
+
+*.log
+/bookmarks*.html
+/Very Important Links*.txt
