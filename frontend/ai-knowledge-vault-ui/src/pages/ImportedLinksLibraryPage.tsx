@@ -1,4 +1,5 @@
 import {
+  Button,
   Chip,
   IconButton,
   InputAdornment,
@@ -14,7 +15,7 @@ import {
   TextField,
   Typography
 } from '@mui/material';
-import { Delete, Search } from '@mui/icons-material';
+import { Delete, FileDownload, Search } from '@mui/icons-material';
 import { useEffect, useState } from 'react';
 import LoadingState from '../components/LoadingState';
 import { useSnackbar } from '../components/SnackbarContext';
@@ -52,11 +53,44 @@ export default function ImportedLinksLibraryPage() {
     load();
   }
 
+  function exportToExcel() {
+    if (!links.length) {
+      showSnackbar('No imported links to export.', 'warning');
+      return;
+    }
+
+    const rows = [
+      ['Title', 'URL', 'Description', 'Source', 'Category'],
+      ...links.map((link) => [
+        link.title,
+        link.url,
+        link.description ?? '',
+        link.sourceType ?? 'Imported',
+        link.sourceCategory ?? 'Uncategorized'
+      ])
+    ];
+    const csv = rows.map((row) => row.map(csvCell).join(',')).join('\r\n');
+    const blob = new Blob([`\uFEFF${csv}`], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `imported-links-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(anchor);
+    anchor.click();
+    anchor.remove();
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <Stack spacing={2}>
       <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }} gap={1.5}>
         <Typography variant="h4" fontWeight={700}>Imported Links Library</Typography>
-        <Chip label={`${links.length} links`} color="primary" variant="outlined" />
+        <Stack direction="row" spacing={1} alignItems="center">
+          <Chip label={`${links.length} links`} color="primary" variant="outlined" />
+          <Button startIcon={<FileDownload />} variant="outlined" disabled={!links.length} onClick={exportToExcel}>
+            Export Excel
+          </Button>
+        </Stack>
       </Stack>
 
       <Paper sx={{ p: 2 }}>
@@ -133,4 +167,8 @@ export default function ImportedLinksLibraryPage() {
       )}
     </Stack>
   );
+}
+
+function csvCell(value: string) {
+  return `"${value.replace(/"/g, '""')}"`;
 }

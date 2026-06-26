@@ -34,6 +34,7 @@ export default function ImportedLinksPage() {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [savedIds, setSavedIds] = useState<Set<string>>(new Set());
   const [failedIds, setFailedIds] = useState<Set<string>>(new Set());
+  const [skippedIds, setSkippedIds] = useState<Set<string>>(new Set());
   const [fileName, setFileName] = useState('');
   const [query, setQuery] = useState('');
   const [error, setError] = useState('');
@@ -100,16 +101,16 @@ export default function ImportedLinksPage() {
   }, [links, query]);
 
   const selectableLinks = useMemo(
-    () => links.filter((link) => !savedIds.has(link.id)),
-    [links, savedIds]
+    () => links.filter((link) => !savedIds.has(link.id) && !skippedIds.has(link.id)),
+    [links, savedIds, skippedIds]
   );
   const filteredSelectableLinks = useMemo(
-    () => filteredLinks.filter((link) => !savedIds.has(link.id)),
-    [filteredLinks, savedIds]
+    () => filteredLinks.filter((link) => !savedIds.has(link.id) && !skippedIds.has(link.id)),
+    [filteredLinks, savedIds, skippedIds]
   );
   const selectedLinks = useMemo(
-    () => links.filter((link) => selectedIds.has(link.id) && !savedIds.has(link.id)),
-    [links, savedIds, selectedIds]
+    () => links.filter((link) => selectedIds.has(link.id) && !savedIds.has(link.id) && !skippedIds.has(link.id)),
+    [links, savedIds, selectedIds, skippedIds]
   );
   const allFilteredSelected = filteredSelectableLinks.length > 0 && filteredSelectableLinks.every((link) => selectedIds.has(link.id));
   const someFilteredSelected = filteredSelectableLinks.some((link) => selectedIds.has(link.id)) && !allFilteredSelected;
@@ -127,6 +128,7 @@ export default function ImportedLinksPage() {
     setSelectedIds(new Set());
     setSavedIds(new Set());
     setFailedIds(new Set());
+    setSkippedIds(new Set());
     setFileName(file.name);
 
     if (!isSupportedImportFile(file)) {
@@ -157,6 +159,7 @@ export default function ImportedLinksPage() {
     setSelectedIds(new Set());
     setSavedIds(new Set());
     setFailedIds(new Set());
+    setSkippedIds(new Set());
   }
 
   function toggleSelected(id: string) {
@@ -188,6 +191,7 @@ export default function ImportedLinksPage() {
     setSelectedIds(new Set());
     setSavedIds(new Set());
     setFailedIds(new Set());
+    setSkippedIds(new Set());
   }
 
   function deselectDuplicates() {
@@ -212,27 +216,37 @@ export default function ImportedLinksPage() {
         description: truncate(link.description, 2000),
         sourceType: link.sourceType,
         sourceCategory: link.category || null,
-        allowDuplicate: duplicateReasons.has(link.id)
+        allowDuplicate: false
       })));
       const createdUrls = new Set(result.createdLinks.map((link) => canonicalUrl(link.url)));
-      const issueUrls = new Set(result.issues.map((issue) => canonicalUrl(issue.url)));
+      const skippedUrls = new Set(result.issues
+        .filter((issue) => issue.reason.toLowerCase().includes('duplicate'))
+        .map((issue) => canonicalUrl(issue.url)));
+      const failedUrls = new Set(result.issues
+        .filter((issue) => !issue.reason.toLowerCase().includes('duplicate'))
+        .map((issue) => canonicalUrl(issue.url)));
       const nextSavedIds = new Set(savedIds);
       const nextFailedIds = new Set<string>();
+      const nextSkippedIds = new Set(skippedIds);
 
       selectedLinks.forEach((link) => {
         const key = canonicalUrl(link.url);
         if (createdUrls.has(key)) {
           nextSavedIds.add(link.id);
-        } else if (issueUrls.has(key)) {
+        } else if (skippedUrls.has(key)) {
+          nextSkippedIds.add(link.id);
+        } else if (failedUrls.has(key)) {
           nextFailedIds.add(link.id);
         }
       });
 
       setSavedIds(nextSavedIds);
       setFailedIds(nextFailedIds);
+      setSkippedIds(nextSkippedIds);
       setSelectedIds((current) => {
         const next = new Set(current);
         nextSavedIds.forEach((id) => next.delete(id));
+        nextSkippedIds.forEach((id) => next.delete(id));
         return next;
       });
       await loadExistingLinks();
@@ -296,7 +310,7 @@ export default function ImportedLinksPage() {
         <Paper sx={{ p: 1.5 }}>
           <Stack direction={{ xs: 'column', sm: 'row' }} justifyContent="space-between" alignItems={{ xs: 'stretch', sm: 'center' }} gap={1}>
             <Typography color="text.secondary">
-              Duplicate rows are flagged. Keep them selected to save anyway, or uncheck/discard them.
+              Duplicate rows are flagged and skipped during save. Deselect or discard them before saving if you do not want them in this review table.
             </Typography>
             <Stack direction="row" spacing={1}>
               <Button startIcon={<Save />} variant="contained" disabled={!selectedLinks.length || saving} onClick={saveSelected}>
@@ -345,7 +359,7 @@ export default function ImportedLinksPage() {
                   <Checkbox
                     size="small"
                     checked={selectedIds.has(link.id)}
-                    disabled={savedIds.has(link.id) || saving}
+                    disabled={savedIds.has(link.id) || skippedIds.has(link.id) || saving}
                     onChange={() => toggleSelected(link.id)}
                   />
                 </TableCell>
@@ -371,10 +385,11 @@ export default function ImportedLinksPage() {
                 <TableCell sx={{ verticalAlign: 'top', py: 1 }}>
                   <Stack direction="row" flexWrap="wrap" gap={0.5}>
                     {savedIds.has(link.id) && <Chip size="small" label="Saved" color="success" />}
+                    {skippedIds.has(link.id) && <Chip size="small" label="Skipped" color="warning" />}
                     {failedIds.has(link.id) && <Chip size="small" label="Failed" color="error" />}
                     {duplicateReasons.get(link.id)?.has('existing') && <Chip size="small" label="Duplicate saved" color="warning" variant="outlined" />}
                     {duplicateReasons.get(link.id)?.has('file') && <Chip size="small" label="Duplicate file" color="warning" variant="outlined" />}
-                    {!savedIds.has(link.id) && !failedIds.has(link.id) && !duplicateReasons.has(link.id) && <Chip size="small" label="New" />}
+                    {!savedIds.has(link.id) && !skippedIds.has(link.id) && !failedIds.has(link.id) && !duplicateReasons.has(link.id) && <Chip size="small" label="New" />}
                   </Stack>
                 </TableCell>
               </TableRow>
