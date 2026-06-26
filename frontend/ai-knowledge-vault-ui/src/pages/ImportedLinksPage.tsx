@@ -205,44 +205,42 @@ export default function ImportedLinksPage() {
     }
 
     setSaving(true);
-    const nextSavedIds = new Set(savedIds);
-    const nextFailedIds = new Set<string>();
-    let savedCount = 0;
+    try {
+      const result = await linkService.bulkImport(selectedLinks.map((link) => ({
+        url: truncate(link.url, 1000),
+        title: truncate(link.title, 200),
+        description: truncate(link.description, 2000),
+        sourceType: link.sourceType,
+        sourceCategory: link.category || null,
+        allowDuplicate: duplicateReasons.has(link.id)
+      })));
+      const createdUrls = new Set(result.createdLinks.map((link) => canonicalUrl(link.url)));
+      const issueUrls = new Set(result.issues.map((issue) => canonicalUrl(issue.url)));
+      const nextSavedIds = new Set(savedIds);
+      const nextFailedIds = new Set<string>();
 
-    for (const link of selectedLinks) {
-      try {
-        await linkService.create({
-          url: truncate(link.url, 1000),
-          title: truncate(link.title, 200),
-          description: truncate(link.description, 2000),
-          categoryId: null,
-          tagIds: [],
-          isImportant: false
-        });
-        nextSavedIds.add(link.id);
-        savedCount += 1;
-      } catch {
-        nextFailedIds.add(link.id);
-      }
-    }
+      selectedLinks.forEach((link) => {
+        const key = canonicalUrl(link.url);
+        if (createdUrls.has(key)) {
+          nextSavedIds.add(link.id);
+        } else if (issueUrls.has(key)) {
+          nextFailedIds.add(link.id);
+        }
+      });
 
-    setSavedIds(nextSavedIds);
-    setFailedIds(nextFailedIds);
-    setSelectedIds((current) => {
-      const next = new Set(current);
-      nextSavedIds.forEach((id) => next.delete(id));
-      return next;
-    });
-    setSaving(false);
-
-    if (savedCount) {
+      setSavedIds(nextSavedIds);
+      setFailedIds(nextFailedIds);
+      setSelectedIds((current) => {
+        const next = new Set(current);
+        nextSavedIds.forEach((id) => next.delete(id));
+        return next;
+      });
       await loadExistingLinks();
-    }
-
-    if (nextFailedIds.size) {
-      showSnackbar(`${savedCount} saved, ${nextFailedIds.size} failed. Failed rows are flagged in the table.`, 'error');
-    } else {
-      showSnackbar(`${savedCount} imported link${savedCount === 1 ? '' : 's'} saved to the vault.`, 'success');
+      showSnackbar(`${result.createdCount} saved, ${result.duplicateCount} duplicate skipped, ${result.failedCount} failed.`, result.failedCount ? 'warning' : 'success');
+    } catch (saveError) {
+      showSnackbar((saveError as Error).message, 'error');
+    } finally {
+      setSaving(false);
     }
   }
 

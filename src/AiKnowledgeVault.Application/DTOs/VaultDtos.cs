@@ -18,6 +18,8 @@ public sealed record SavedLinkDto(
     string Url,
     string Title,
     string? Description,
+    string? SourceType,
+    string? SourceCategory,
     bool IsImportant,
     Guid? CategoryId,
     string? CategoryName,
@@ -26,3 +28,7 @@ public sealed record SavedLinkDto(
     DateTimeOffset? UpdatedAt);
 
 public sealed record SearchResultDto(IReadOnlyList<NoteDto> Notes, IReadOnlyList<SavedLinkDto> Links);
+public sealed record BulkSavedLinkImportItem(string Url, string Title, string? Description, string? SourceType, string? SourceCategory, bool AllowDuplicate);
+public sealed record BulkSavedLinkImportCommand(IReadOnlyList<BulkSavedLinkImportItem> Links);
+public sealed record BulkSavedLinkImportResultDto(int RequestedCount, int CreatedCount, int DuplicateCount, int FailedCount, IReadOnlyList<SavedLinkDto> CreatedLinks, IReadOnlyList<BulkSavedLinkImportIssueDto> Issues);
+public sealed record BulkSavedLinkImportIssueDto(string Url, string Reason);

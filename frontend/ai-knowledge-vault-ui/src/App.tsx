@@ -9,6 +9,7 @@ import LinkFormPage from './pages/LinkFormPage';
 import TaxonomyPage from './pages/TaxonomyPage';
 import SearchPage from './pages/SearchPage';
 import ImportedLinksPage from './pages/ImportedLinksPage';
+import ImportedLinksLibraryPage from './pages/ImportedLinksLibraryPage';
 import { SnackbarProvider, useSnackbar } from './components/SnackbarContext';
 
 const navItems = [
@@ -16,7 +17,8 @@ const navItems = [
   { to: '/notes', label: 'Notes', icon: <StickyNote2 fontSize="small" /> },
   { to: '/notes/new', label: 'Add Note', icon: <NoteAdd fontSize="small" /> },
   { to: '/links', label: 'Links', icon: <AddLink fontSize="small" /> },
-  { to: '/imports', label: 'Imported Links', icon: <FileUpload fontSize="small" /> },
+  { to: '/imports', label: 'Import Links', icon: <FileUpload fontSize="small" /> },
+  { to: '/imported-links', label: 'Imported Library', icon: <FileUpload fontSize="small" /> },
   { to: '/taxonomy', label: 'Categories & Tags', icon: <Category fontSize="small" /> },
   { to: '/search', label: 'Search', icon: <Search fontSize="small" /> }
 ];
@@ -56,6 +58,7 @@ function Shell() {
           <Route path="/links/new" element={<LinkFormPage />} />
           <Route path="/links/:id/edit" element={<LinkFormPage />} />
           <Route path="/imports" element={<ImportedLinksPage />} />
+          <Route path="/imported-links" element={<ImportedLinksLibraryPage />} />
           <Route path="/taxonomy" element={<TaxonomyPage />} />
           <Route path="/search" element={<SearchPage />} />
         </Routes>

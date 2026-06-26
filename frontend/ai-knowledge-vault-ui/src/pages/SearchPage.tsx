@@ -2,10 +2,11 @@ import { Grid, Stack, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import Filters from '../components/Filters';
 import LoadingState from '../components/LoadingState';
-import { LinkCard, NoteCard } from '../components/VaultCards';
+import { NoteCard } from '../components/VaultCards';
 import { useSnackbar } from '../components/SnackbarContext';
 import { useTaxonomy } from '../hooks/useTaxonomy';
 import { searchService } from '../services/searchService';
+import { noteService } from '../services/noteService';
 import type { SearchFilters, SearchResult } from '../types';
 
 export default function SearchPage() {
@@ -16,12 +17,25 @@ export default function SearchPage() {
   const { showSnackbar } = useSnackbar();
 
   useEffect(() => {
-    setLoading(true);
-    searchService.search(filters)
-      .then(setResult)
-      .catch((error) => showSnackbar((error as Error).message, 'error'))
-      .finally(() => setLoading(false));
+    load();
   }, [filters]);
+
+  async function load() {
+    setLoading(true);
+    try {
+      setResult(await searchService.search(filters));
+    } catch (error) {
+      showSnackbar((error as Error).message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function removeNote(id: string) {
+    await noteService.delete(id);
+    showSnackbar('Note deleted', 'success');
+    load();
+  }
 
   return (
     <Stack spacing={3}>
@@ -31,11 +45,7 @@ export default function SearchPage() {
         <Stack spacing={3}>
           <Typography variant="h6">Notes</Typography>
           <Grid container spacing={2}>
-            {result.notes.map((note) => <Grid item xs={12} md={6} key={note.id}><NoteCard note={note} /></Grid>)}
-          </Grid>
-          <Typography variant="h6">Links</Typography>
-          <Grid container spacing={2}>
-            {result.links.map((link) => <Grid item xs={12} md={6} key={link.id}><LinkCard link={link} /></Grid>)}
+            {result.notes.map((note) => <Grid item xs={12} md={6} key={note.id}><NoteCard note={note} onDelete={() => removeNote(note.id)} /></Grid>)}
           </Grid>
         </Stack>
       )}

@@ -1,5 +1,6 @@
 using AiKnowledgeVault.Api.Middleware;
 using AiKnowledgeVault.Application;
+using AiKnowledgeVault.Application.DTOs;
 using AiKnowledgeVault.Application.Features.Links;
 using AiKnowledgeVault.Application.Features.Notes;
 using AiKnowledgeVault.Application.Features.Search;
@@ -78,6 +79,10 @@ links.MapPost("/", async (CreateSavedLinkCommand command, SavedLinkHandlers hand
     return Results.Created($"/api/links/{created.Id}", created);
 });
 links.MapGet("/", async (SavedLinkHandlers handler, CancellationToken ct) => Results.Ok(await handler.GetAllAsync(ct)));
+links.MapPost("/bulk-import", async (BulkSavedLinkImportCommand command, SavedLinkHandlers handler, CancellationToken ct) =>
+    Results.Ok(await handler.BulkImportAsync(command, ct)));
+links.MapGet("/imported", async (string? keyword, SavedLinkHandlers handler, CancellationToken ct) =>
+    Results.Ok(await handler.GetImportedAsync(new ImportedLinksQuery(keyword), ct)));
 links.MapGet("/{id:guid}", async (Guid id, SavedLinkHandlers handler, CancellationToken ct) =>
     await handler.GetByIdAsync(id, ct) is { } link ? Results.Ok(link) : Results.NotFound());
 links.MapPut("/{id:guid}", async (Guid id, UpdateSavedLinkRequest request, SavedLinkHandlers handler, CancellationToken ct) =>
@@ -99,8 +104,8 @@ tags.MapPost("/", async (CreateTagCommand command, TaxonomyHandlers handler, Can
     Results.Created("/api/tags", await handler.CreateTagAsync(command, ct)));
 tags.MapGet("/", async (TaxonomyHandlers handler, CancellationToken ct) => Results.Ok(await handler.GetTagsAsync(ct)));
 
-app.MapGet("/api/search", async (string? keyword, Guid? categoryId, Guid? tagId, bool? isImportant, SearchHandlers handler, CancellationToken ct) =>
-    Results.Ok(await handler.SearchAsync(new SearchVaultQuery(keyword, categoryId, tagId, isImportant), ct))).WithTags("Search");
+app.MapGet("/api/search", async (string? keyword, Guid? categoryId, Guid? tagId, bool? isImportant, NoteHandlers handler, CancellationToken ct) =>
+    Results.Ok(new SearchResultDto(await handler.SearchAsync(new SearchVaultQuery(keyword, categoryId, tagId, isImportant), ct), []))).WithTags("Search");
 
 app.Run();
 

@@ -18,6 +18,8 @@ export type SavedLink = {
   url: string;
   title: string;
   description?: string | null;
+  sourceType?: string | null;
+  sourceCategory?: string | null;
   isImportant: boolean;
   categoryId?: string | null;
   categoryName?: string | null;
@@ -61,4 +63,22 @@ export type ImportedLink = {
   description: string;
   sourceType: ImportedLinkSourceType;
   category?: string;
+};
+
+export type BulkLinkImportItem = {
+  url: string;
+  title: string;
+  description?: string | null;
+  sourceType?: string | null;
+  sourceCategory?: string | null;
+  allowDuplicate: boolean;
+};
+
+export type BulkLinkImportResult = {
+  requestedCount: number;
+  createdCount: number;
+  duplicateCount: number;
+  failedCount: number;
+  createdLinks: SavedLink[];
+  issues: { url: string; reason: string }[];
 };

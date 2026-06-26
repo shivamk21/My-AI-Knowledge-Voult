@@ -54,8 +54,12 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             entity.Property(e => e.Url).HasMaxLength(1000).IsRequired();
             entity.Property(e => e.Title).HasMaxLength(200).IsRequired();
             entity.Property(e => e.Description).HasMaxLength(2000);
+            entity.Property(e => e.SourceType).HasMaxLength(100);
+            entity.Property(e => e.SourceCategory).HasMaxLength(500);
             entity.HasIndex(e => e.Title);
             entity.HasIndex(e => e.CategoryId);
+            entity.HasIndex(e => e.Url);
+            entity.HasIndex(e => e.SourceType);
             entity.HasOne(e => e.Category).WithMany(c => c.SavedLinks).HasForeignKey(e => e.CategoryId).OnDelete(DeleteBehavior.SetNull);
         });
 

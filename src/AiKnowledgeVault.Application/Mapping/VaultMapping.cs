@@ -21,6 +21,8 @@ public static class VaultMapping
         link.Url,
         link.Title,
         link.Description,
+        link.SourceType,
+        link.SourceCategory,
         link.IsImportant,
         link.CategoryId,
         link.Category?.Name,
